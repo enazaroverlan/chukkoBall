@@ -43,6 +43,7 @@ public class SmoothFollow : MonoBehaviour
         float newYRotation = Mathf.SmoothDampAngle(transform.rotation.y, target.rotation.y, ref rotationVelocity.y, rotationSmooth / 100);
         float newZRotation = Mathf.SmoothDampAngle(transform.rotation.z, target.rotation.z, ref rotationVelocity.z, rotationSmooth / 100);
         float newWRotation = Mathf.SmoothDampAngle(transform.rotation.w, target.rotation.w, ref rotationVelocity.w, rotationSmooth / 100);
-        transform.rotation = new Quaternion(newXRotation + lookAtRotation.x, newYRotation + lookAtRotation.y, newZRotation + lookAtRotation.z, newWRotation + lookAtRotation.w);
+        //transform.rotation = new Quaternion(newXRotation + lookAtRotation.x, newYRotation + lookAtRotation.y, newZRotation + lookAtRotation.z, newWRotation + lookAtRotation.w);
+        transform.LookAt(target);
     }
 }

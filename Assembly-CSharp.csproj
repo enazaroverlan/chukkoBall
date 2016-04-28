@@ -48,6 +48,8 @@
      <Compile Include="Assets\Scripts\Chukko.cs" />
      <Compile Include="Assets\Scripts\ChukkoInAir.cs" />
      <Compile Include="Assets\Scripts\ChukkoLauncher.cs" />
+     <Compile Include="Assets\Scripts\MyLog.cs" />
+     <Compile Include="Assets\Scripts\Physics\ColliderPhysics.cs" />
      <Compile Include="Assets\Scripts\SmoothFollow.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

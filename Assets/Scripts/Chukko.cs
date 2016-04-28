@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System;
+using UnityEngine.iOS;
 
 public class Chukko : MonoBehaviour
 {
@@ -14,13 +14,45 @@ public class Chukko : MonoBehaviour
     private bool mouseDown = false;
     private bool ChukkoReadyToLounch;
 
+    Touch fingTouch;
 
     public void Update()
     {
-        if (Input.GetMouseButton(0))
+
+        if (!Application.isEditor)
         {
-            transform.position = new Vector3(transform.position.x + (Input.GetAxis("Mouse X") * Time.deltaTime), transform.position.y, transform.position.z + (Input.GetAxis("Mouse Y") * Time.deltaTime));
-            transform.Rotate(Vector3.up, Input.GetAxis("Mouse X"));
+            if (fingTouch.tapCount > 0)
+            {
+                if (fingTouch.phase == TouchPhase.Began)
+                {
+
+                    Debug.Log("TouchPhase = Began; \n touch position = (" + fingTouch.position.x + ", " + fingTouch.position.y + ") ");
+
+                    SetStartSettings();
+                    mouseDown = true;
+                }
+                else if (fingTouch.phase == TouchPhase.Moved)
+                {
+                    Debug.Log("TouchPhase = Moved");
+                    transform.position = new Vector3(transform.position.x + (fingTouch.position.x * Time.deltaTime), transform.position.y, transform.position.z + (fingTouch.position.x * Time.deltaTime));
+                    transform.Rotate(Vector3.up, Input.GetAxis("Mouse X"));
+
+                }
+                else if (fingTouch.phase == TouchPhase.Ended)
+                {
+                    Debug.Log("TouchPhase = Ended");
+                    SetEndSettings();
+                    mouseDown = false;
+                }
+            }
+        }
+        else
+        {
+            if (Input.GetMouseButton(0))
+            {
+                transform.position = new Vector3(transform.position.x + (Input.GetAxis("Mouse X") * Time.deltaTime), transform.position.y, transform.position.z + (Input.GetAxis("Mouse Y") * Time.deltaTime));
+                transform.Rotate(Vector3.up, Input.GetAxis("Mouse X"));
+            }
         }
 
         if (mouseDown)
@@ -29,20 +61,13 @@ public class Chukko : MonoBehaviour
         }
         else if (!mouseDown)
         {
-            /*if (startPosition != Vector3.zero)
-            {
-                transform.position = Vector3.Slerp(transform.position, startPosition, 3.5f * Time.deltaTime);
-                if (transform.position == startPosition)
-                {
-                    ChukkoReadyToLounch = true;
-                }
-            }*/
+            
         }
     }
 
     
 
-
+    
     public void OnMouseDown()
     {
         SetStartSettings();
@@ -54,7 +79,7 @@ public class Chukko : MonoBehaviour
         Debug.Log("OnMouseUp");
         SetEndSettings();
     }
-
+    
     public void SetStartSettings()
     {
         startPosition = transform.position;
@@ -70,11 +95,13 @@ public class Chukko : MonoBehaviour
         mouseDown = false;
         transform.SetParent(null);
         transform.gameObject.AddComponent<Rigidbody>();
-        transform.GetComponent<Rigidbody>().mass = 0.5f;
-        transform.GetComponent<Rigidbody>().AddForceAtPosition((Vector3.forward * ((distance / pressTime) * 40)), transform.position);
-        Camera.main.gameObject.GetComponent<SmoothFollow>().target = transform;
-        Camera.main.gameObject.GetComponent<SmoothFollow>().enabled = true;
+        Vector3 RandomizedDirection = transform.TransformDirection(Vector3.forward);
+        transform.GetComponent<Rigidbody>().mass = 0.1f;
+        transform.GetComponent<Rigidbody>().AddForceAtPosition((Vector3.forward * ((distance / pressTime) * 5)), transform.position);
+        Camera.main.transform.GetComponent<SmoothFollow>().target = transform;
+        Camera.main.transform.GetComponent<SmoothFollow>().enabled = true;
         transform.gameObject.AddComponent<ChukkoInAir>();
+        transform.gameObject.GetComponent<ChukkoInAir>().RotateCase = Random.Range(0, 17);
         transform.GetComponent<ChukkoInAir>().rotation = Camera.main.transform.rotation;
         Destroy(this);
     }
